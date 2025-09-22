@@ -12,8 +12,6 @@
 //
 // Execute `rustlings hint cow1` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
-
 use std::borrow::Cow;
 
 fn abs_all<'a, 'b>(input: &'a mut Cow<'b, [i32]>) -> &'a mut Cow<'b, [i32]> {
@@ -36,7 +34,7 @@ mod tests {
         // Clone occurs because `input` needs to be mutated.
         let slice = [-1, 0, 1];
         let mut input = Cow::from(&slice[..]);
-        match abs_all(&mut input) {
+        match abs_all(&mut input) { // -1 => 1 changed, so owned
             Cow::Owned(_) => Ok(()),
             _ => Err("Expected owned value"),
         }
@@ -47,8 +45,10 @@ mod tests {
         // No clone occurs because `input` doesn't need to be mutated.
         let slice = [0, 1, 2];
         let mut input = Cow::from(&slice[..]);
-        match abs_all(&mut input) {
+        match abs_all(&mut input) { // no change => borrow
             // TODO
+            Cow::Borrowed(_) => Ok(()),
+            _ => Err("Expected borrowed value"),
         }
     }
 
@@ -61,6 +61,8 @@ mod tests {
         let mut input = Cow::from(slice);
         match abs_all(&mut input) {
             // TODO
+            Cow::Owned(_) => Ok(()),
+            _ => Err("Expected owned value"),
         }
     }
 
@@ -73,6 +75,8 @@ mod tests {
         let mut input = Cow::from(slice);
         match abs_all(&mut input) {
             // TODO
+            Cow::Owned(_) => Ok(()),
+            _ => Err("Expected owned value"),
         }
     }
 }
