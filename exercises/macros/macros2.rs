@@ -12,6 +12,5 @@ macro_rules! my_macro {
 }
 
 fn main() {
-    hello();;
     my_macro!();
 }
