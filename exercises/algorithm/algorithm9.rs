@@ -2,7 +2,6 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -38,12 +37,25 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.items.push(value);
+        self.count += 1;
+        let mut idx = self.count;
+        while idx > 1 {
+            let parent_idx = self.parent_idx(idx);
+            if (self.comparator)(&self.items[idx], &self.items[parent_idx]) {
+                self.items.swap(idx, parent_idx);
+                idx = parent_idx;
+            } else {
+                break;
+            }
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
         idx / 2
     }
 
+    // Check if the node has children
     fn children_present(&self, idx: usize) -> bool {
         self.left_child_idx(idx) <= self.count
     }
@@ -58,7 +70,28 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+        // no need to check if children_present
+        let left = self.left_child_idx(idx);
+        let right = self.right_child_idx(idx);
+        if right > self.count {
+            return left;
+        }
+        if (self.comparator)(&self.items[right], &self.items[left]) {
+            right
+        } else {
+            left
+        }
+    }
+
+    fn heapify(&mut self, idx: usize) {
+        if !self.children_present(idx) {
+            return;
+        }
+        let smallest_child = self.smallest_child_idx(idx);
+        if (self.comparator)(&self.items[smallest_child], &self.items[idx]) {
+            self.items.swap(smallest_child, idx);
+            self.heapify(smallest_child);
+        }
     }
 }
 
@@ -79,13 +112,24 @@ where
 
 impl<T> Iterator for Heap<T>
 where
-    T: Default,
+    T: Default + Copy,
 {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+        if self.is_empty() {
+            return None;
+        }
+        let top = self.items[1];
+        let last = self.items.pop().unwrap();
+        self.count -= 1;
+        if self.is_empty() {
+            return Some(top);
+        }
+        self.items[1] = last;
+        self.heapify(1);
+        Some(top)
     }
 }
 
